@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:school_application/screens/signup.dart';
 import 'package:school_application/theme/theme.dart';
@@ -16,8 +18,24 @@ class Signin extends StatefulWidget {
 }
 
 class _SigninState extends State<Signin> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
+
+  Future signIn() async{
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim());
+  }
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _emailController.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +73,7 @@ class _SigninState extends State<Signin> {
                         height: 40.0,
                       ),
                       TextFormField(
+                        controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter email';
@@ -78,6 +97,7 @@ class _SigninState extends State<Signin> {
                         height: 40.0,
                       ),
                       TextFormField(
+                        controller: _passwordController,
                         obscureText: true,
                         obscuringCharacter: '*',
                         validator: (value) {
@@ -136,27 +156,30 @@ class _SigninState extends State<Signin> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_formSignInKey.currentState!.validate() &&
-                                rememberPassword) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Processing Data'),
-                                ),
-                              );
-                            } else if (!rememberPassword) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'Please agree to the processing of personal data'),
-                                ),
-                              );
-                            }
-                          },
-                          child: const Text('Sign up'),
+                      GestureDetector(
+                        onTap: signIn,
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (_formSignInKey.currentState!.validate() &&
+                                  rememberPassword) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Processing Data'),
+                                  ),
+                                );
+                              } else if (!rememberPassword) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Please agree to the processing of personal data'),
+                                  ),
+                                );
+                              }
+                            },
+                            child: const Text('Sign up'),
+                          ),
                         ),
                       ),
                       const SizedBox(

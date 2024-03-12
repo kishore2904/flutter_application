@@ -3,6 +3,12 @@ allprojects {
         google()
         mavenCentral()
     }
+    dependencies {
+        // Add the dependency for the Google services Gradle plugin
+        classpath 'com.google.gms:google-services:4.4.1'
+
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
+    }
 }
 
 rootProject.buildDir = '../build'
@@ -13,6 +19,8 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
+
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
